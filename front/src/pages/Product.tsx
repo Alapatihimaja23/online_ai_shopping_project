@@ -1,8 +1,8 @@
 import { Button } from "../components/ui/button";
-import { useParams } from "react-router-dom";
+// import { useParams } from "react-router-dom";
 
 export default function Product() {
-  const { id } = useParams();
+  // const { id } = useParams();
   // Example: Fetch product by id with TanStack Query (to be implemented)
   // const { data: product, isLoading } = useProductQuery(id);
   return (
