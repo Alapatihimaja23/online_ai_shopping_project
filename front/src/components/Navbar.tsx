@@ -8,12 +8,22 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import { useState } from "react";
+import { useCart } from "../context/CartContext";
 
-export default function Navbar() {
+
+type NavbarProps = {
+  search: string;
+  setSearch: (s: string) => void;
+  selectedCategory: string;
+  setSelectedCategory: (c: string) => void;
+};
+
+export default function Navbar({ search, setSearch }: NavbarProps) {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn] = useState(false); // Will connect to auth context later
-  
+  const { cart } = useCart();
+  const cartCount = Object.values(cart).reduce((sum, item) => sum + item.qty, 0);
   // Navigation links
   const navLinks = [
     { to: "/", label: "Home", exact: true },
@@ -46,6 +56,8 @@ export default function Navbar() {
         <div className="relative">
           <input
             type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
             placeholder="Search products..."
             className="pl-8 pr-3 py-1.5 text-sm rounded-md border border-gray-300 w-40 h-9 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
@@ -54,7 +66,7 @@ export default function Navbar() {
         <Link to="/cart">
           <Button variant="ghost" size="icon" className="relative rounded-full hover:bg-blue-50">
             <ShoppingCartIcon className="text-gray-700" fontSize="medium" />
-            <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+            <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{cartCount}</span>
           </Button>
         </Link>
         {isLoggedIn ? (

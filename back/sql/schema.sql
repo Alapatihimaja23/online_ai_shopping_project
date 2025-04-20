@@ -5,7 +5,7 @@ create extension if not exists pgcrypto;
 -- ========== TABLES ==========
 
 -- Users
-create table public.users (
+create table if not exists public.users (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   email text unique not null,
@@ -15,7 +15,7 @@ create table public.users (
 );
 
 -- Products
-create table public.products (
+create table if not exists public.products (
   id uuid primary key default gen_random_uuid(),
   title text not null,
   description text,
@@ -23,26 +23,28 @@ create table public.products (
   price numeric(10,2) not null,
   category text,
   stock_quantity int default 0,
-  user_id uuid references public.users(id) on delete set null
+  user_id uuid references public.users(id) on delete set null,
+  constraint unique_product_title unique (title)
 );
 
 -- Carts
-create table public.carts (
+create table if not exists public.carts (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references public.users(id) on delete cascade,
   created_at timestamp default now()
 );
 
 -- Cart items
-create table public.cart_items (
+create table if not exists public.cart_items (
   id uuid primary key default gen_random_uuid(),
   cart_id uuid references public.carts(id) on delete cascade,
   product_id uuid references public.products(id),
-  quantity int default 1
+  quantity int default 1,
+  constraint unique_cartitem unique (cart_id, product_id)
 );
 
 -- Orders
-create table public.orders (
+create table if not exists public.orders (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references public.users(id),
   merchant_id uuid references public.users(id),
@@ -52,7 +54,7 @@ create table public.orders (
 );
 
 -- Order items
-create table public.order_items (
+create table if not exists public.order_items (
   id uuid primary key default gen_random_uuid(),
   order_id uuid references public.orders(id) on delete cascade,
   product_id uuid references public.products(id),
@@ -61,7 +63,7 @@ create table public.order_items (
 );
 
 -- Admin actions
-create table public.admin_actions (
+create table if not exists public.admin_actions (
   id uuid primary key default gen_random_uuid(),
   admin_id uuid references public.users(id),
   action_type text,
@@ -71,7 +73,7 @@ create table public.admin_actions (
 );
 
 -- Optional: product reviews
-create table public.reviews (
+create table if not exists public.reviews (
   id uuid primary key default gen_random_uuid(),
   product_id uuid references public.products(id),
   user_id uuid references public.users(id),
@@ -79,3 +81,10 @@ create table public.reviews (
   comment text,
   created_at timestamp default now()
 );
+
+--
+-- NOTE for Supabase SQL Editor:
+-- This schema is idempotent and can be run multiple times safely.
+-- Product title is unique for upsert/merge in seed scripts.
+-- Add ON CONFLICT (title) DO UPDATE for upserts in data scripts.
+--

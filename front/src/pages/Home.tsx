@@ -1,51 +1,136 @@
+import React from "react";
 import { Button } from "../components/ui/button";
-import ProductCard from "../components/ProductCard";
+import { ProductCard } from "../components/ProductCard";
 import DevicesIcon from '@mui/icons-material/Devices';
 import WatchIcon from '@mui/icons-material/Watch';
 import LaptopMacIcon from '@mui/icons-material/LaptopMac';
 import HeadphonesIcon from '@mui/icons-material/Headphones';
 import HomeIcon from '@mui/icons-material/Home';
 
-export default function Home() {
-  // Sample products based on database schema
-  const featuredProducts = [
-    {
-      id: "1",
-      title: "Premium Noise-Cancelling Headphones",
-      description: "Experience crystal-clear audio with our premium noise-cancelling technology.",
-      price: 149.99,
-      category: "Electronics",
-      stock_quantity: 25,
-      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=300"
-    },
-    {
-      id: "2",
-      title: "Smart Watch Series X",
-      description: "Track your fitness, receive notifications, and more with our latest smartwatch.",
-      price: 299.99,
-      category: "Wearables",
-      stock_quantity: 12,
-      image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=300"
-    },
-    {
-      id: "3",
-      title: "Ultra-Slim Laptop Pro",
-      description: "Powerful performance in an ultra-slim design. Perfect for professionals.",
-      price: 1299.99,
-      category: "Computers",
-      stock_quantity: 8,
-      image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=300"
-    },
-    {
-      id: "4",
-      title: "Wireless Charging Pad",
-      description: "Fast wireless charging for all your compatible devices.",
-      price: 49.99,
-      category: "Accessories",
-      stock_quantity: 30,
-      image: "https://images.unsplash.com/photo-1585338107529-13afc5f02586?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=300"
+type HomeProps = {
+  selectedCategory: string;
+  setSelectedCategory: (c: string) => void;
+};
+
+export default function Home({ selectedCategory, setSelectedCategory }: HomeProps) {
+  // Products state fetched from backend
+  type Product = {
+    id: string;
+    title: string;
+    description: string;
+    image: string;
+    price: number | string;
+    category: string;
+    stock_quantity: number;
+  };
+  const [products, setProducts] = React.useState<Product[]>([]);
+  const [search, setSearch] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+
+  // Helper for error state
+  const [error, setError] = React.useState<string>("");
+  // selectedCategory and setSelectedCategory are received as props from App
+  
+  const apiBaseURL = import.meta.env.VITE_API_BASE_URL;
+  
+  // Fetch 4 diverse products by default
+  React.useEffect(() => {
+    setLoading(true);
+    setError("");
+    fetch(`${apiBaseURL}/products?limit=4`)
+      .then(async res => {
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || 'Failed to load products');
+        }
+        return res.json();
+      })
+      .then(data => {
+        setProducts(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setProducts([]);
+        setLoading(false);
+      });
+  }, [apiBaseURL]);
+
+  // AI Suggestion state
+  const [aiSuggestion, setAiSuggestion] = React.useState<string>("");
+  const [aiRecommended, setAiRecommended] = React.useState<Product|null>(null);
+  const [aiLoading, setAiLoading] = React.useState(false);
+  const handleAISuggest = async () => {
+    setAiLoading(true);
+    setAiSuggestion("");
+    setAiRecommended(null);
+    try {
+      const res = await fetch(`${apiBaseURL}/products/ai_suggest`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: "Suggest a product for me" })
+      });
+      if (!res.ok) throw new Error("AI suggestion failed");
+      const data = await res.json();
+      setAiSuggestion(data.suggestion || "");
+      setAiRecommended(data.recommended ? { ...data.recommended, price: Number(data.recommended.price) } : null);
+    } catch {
+      setAiSuggestion("Could not get AI suggestion");
+      setAiRecommended(null);
     }
-  ];
+    setAiLoading(false);
+  };  
+
+  // Search handler
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearch(value);
+    setSelectedCategory("");
+    setLoading(true);
+    setError("");
+    fetch(`${apiBaseURL}/products?q=${encodeURIComponent(value)}`)
+      .then(async res => {
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || 'Failed to load products');
+        }
+        return res.json();
+      })
+      .then(data => {
+        setProducts(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setProducts([]);
+        setLoading(false);
+      });
+  };
+
+  // Category click handler
+  const handleCategoryClick = (category: string) => {
+    setSelectedCategory(category);
+    setSearch("");
+    setLoading(true);
+    setError("");
+    fetch(`${apiBaseURL}/products?category=${encodeURIComponent(category)}&limit=4`)
+      .then(async res => {
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || 'Failed to load products');
+        }
+        return res.json();
+      })
+      .then(data => {
+        setProducts(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setProducts([]);
+        setLoading(false);
+      });
+  };
 
   // Categories based on database schema
 
@@ -59,6 +144,55 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <div className="max-w-5xl mx-auto py-8">
+        <input
+          type="text"
+          placeholder="Search products by title..."
+          value={search}
+          onChange={handleSearch}
+          className="w-full p-2 mb-6 border rounded shadow"
+        />
+        {loading ? (
+          <div className="text-center py-10 text-lg">Loading products...</div>
+        ) : error ? (
+          <div className="text-center py-10 text-lg text-red-600">{error === 'No products found.' ? (
+            <div>
+              <img src="https://placehold.co/300x300/eee/888?text=Out+of+Stock" alt="Out of Stock" className="mx-auto mb-4 rounded" style={{maxWidth:180}} />
+              <div>Oops, we are out of stock!</div>
+            </div>
+          ) : error}</div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
+            {products.map((product) => (
+              <ProductCard key={product.id} {...{...product, price: Number(product.price)}} />
+            ))}
+          </div>
+        )}
+
+        {/* AI Suggestion and Recommendation moved below */}
+        <div className="flex flex-col items-center mt-8">
+          <Button onClick={handleAISuggest} disabled={aiLoading}>
+            {aiLoading ? "Thinking..." : "✨ AI Suggest"}
+          </Button>
+        </div>
+        {(aiSuggestion || aiRecommended) && (
+          <div className="flex flex-col items-center mt-4">
+            {aiSuggestion && (
+              <div className="mt-4 text-center max-w-xl">
+                <div className="font-semibold text-lg mb-2">AI Suggestion:</div>
+                <div className="bg-gray-100 rounded p-3">{aiSuggestion}</div>
+              </div>
+            )}
+            {aiRecommended && (
+              <div className="mt-4">
+                <div className="font-semibold">Recommended Product:</div>
+                <ProductCard {...{...aiRecommended, price: Number(aiRecommended.price)}} />
+              </div>
+            )}
+          </div>
+        )}
+
+      </div>
       {/* Hero Section */}
       <section className="relative w-full bg-gradient-to-br from-blue-100 to-purple-200 py-10 flex flex-col items-center justify-center text-center overflow-hidden min-h-[350px] px-0">
         <div className="absolute inset-0 w-full h-full overflow-hidden">
@@ -77,7 +211,7 @@ export default function Home() {
           <p className="text-base md:text-lg text-blue-800 mb-5 max-w-xl mx-auto text-center">
             Discover premium products and get personalized AI-powered recommendations tailored just for you!
           </p>
-          <Button size="lg" className="text-base px-6 py-2 shadow-md bg-blue-600 hover:bg-blue-700 transition-colors mx-auto">
+          <Button size="lg" className="text-base px-6 py-2 shadow-md bg-blue-600 hover:bg-blue-700 transition-colors mx-auto" onClick={() => alert('AI integration is in progress. We\'ll keep in touch!')}>
             Shop Now
           </Button>
         </div>
@@ -88,7 +222,11 @@ export default function Home() {
         <h2 className="text-xl md:text-2xl font-bold mb-4 text-gray-800 text-center">Shop by Category</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 w-full max-w-3xl mx-auto">
           {categories.map((category, index) => (
-            <div key={index} className="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-4 flex flex-col items-center justify-center cursor-pointer min-w-[110px] min-h-[110px]">
+            <div
+              key={index}
+              className={`bg-white rounded-lg shadow hover:shadow-md transition-shadow p-4 flex flex-col items-center justify-center cursor-pointer min-w-[110px] min-h-[110px] border-2 ${selectedCategory === category.name ? 'border-blue-500' : 'border-transparent'}`}
+              onClick={() => handleCategoryClick(category.name)}
+            >
               <span className="mb-2 flex items-center justify-center">
                 {category.icon}
               </span>
@@ -98,21 +236,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section className="w-full py-8 px-2 sm:px-4 flex flex-col items-center">
-        <div className="flex flex-col md:flex-row md:justify-between items-center w-full max-w-6xl mb-4 gap-4 px-2 sm:px-0">
-          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 text-center md:text-left">Featured Products</h2>
-          <Button variant="outline" size="sm" className="hidden md:block text-sm">View All</Button>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 w-fullmax-w-6xl mx-auto">
-          {featuredProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-        <div className="mt-4 text-center md:hidden">
-          <Button variant="outline" size="sm" className="text-sm">View All Products</Button>
-        </div>
-      </section>
 
       {/* AI Recommendations */}
       <section className="w-full py-6 px-2 sm:px-4 mb-8">
@@ -121,7 +244,7 @@ export default function Home() {
             <div className="mb-4 md:mb-0 md:mr-6">
               <h2 className="text-xl md:text-2xl font-bold mb-2">Get AI-Powered Recommendations</h2>
               <p className="mb-4 max-w-xl text-sm md:text-base">Our advanced AI analyzes your preferences to suggest products you'll love. Try it now!</p>
-              <Button size="sm" className="bg-white text-blue-600 hover:bg-gray-100 text-sm">Get Recommendations</Button>
+              <Button size="sm" className="bg-white text-blue-600 hover:bg-gray-100 text-sm" onClick={() => alert('AI integration is in progress. We\'ll keep in touch!')}>Get Recommendations</Button>
             </div>
             <div className="w-full md:w-1/4 flex-shrink-0">
               <img 

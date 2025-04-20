@@ -1,19 +1,20 @@
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "../components/ui/button";
+import { useCart } from "../context/CartContext";
 
-type ProductProps = {
-  product?: {
-    id?: string;
-    title: string;
-    description?: string;
-    image?: string;
-    price: number;
-    category?: string;
-    stock_quantity?: number;
-  }
+type ProductCardProps = {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  price: number;
+  category: string;
+  stock_quantity: number;
 };
 
-export default function ProductCard({ product }: ProductProps) {
+export const ProductCard: React.FC<ProductCardProps> = ({ ...product }) => {
+  const { cart, addToCart, removeFromCart } = useCart();
+  const cartQty = cart[product.id]?.qty || 0;
   // Placeholder product data based on database schema
   const prod = product || {
     title: "Premium Headphones",
@@ -52,14 +53,40 @@ export default function ProductCard({ product }: ProductProps) {
         
         <div className="mt-auto">
           <div className="flex justify-between items-center mb-2">
-            <span className="font-semibold text-base">${prod.price.toFixed(2)}</span>
+            <span className="font-semibold text-base">₹{Number(prod.price).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
             {prod.stock_quantity !== undefined && (
               <span className="text-[10px] text-gray-500">{prod.stock_quantity} in stock</span>
             )}
           </div>
-          <Button size="sm" className="w-full text-xs bg-blue-600 hover:bg-blue-700 py-1">Add to Cart</Button>
+          {cartQty === 0 ? (
+            <Button
+              size="sm"
+              className="w-full text-xs bg-blue-600 hover:bg-blue-700 py-1"
+              onClick={() => {
+                addToCart({
+                  id: prod.id,
+                  title: prod.title,
+                  image: prod.image,
+                  price: Number(prod.price)
+                });
+              }}
+            >
+              Add to Cart
+            </Button>
+          ) : (
+            <div className="flex items-center justify-center gap-2 mt-2">
+              <Button size="sm" variant="outline" onClick={() => removeFromCart(prod.id)}>-</Button>
+              <span className="font-medium text-base px-2">{cartQty}</span>
+              <Button size="sm" variant="outline" onClick={() => addToCart({
+                id: prod.id,
+                title: prod.title,
+                image: prod.image,
+                price: Number(prod.price)
+              })}>+</Button>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
   );
-}
+};

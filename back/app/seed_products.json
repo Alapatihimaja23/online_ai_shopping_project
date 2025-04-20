@@ -1,0 +1,114 @@
+[
+  {
+    "title": "Apple",
+    "description": "Fresh red apples, juicy and sweet.",
+    "image": "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?auto=format&fit=crop&w=800&q=80",
+    "price": 120,
+    "category": "Fruits",
+    "stock_quantity": 100
+  },
+  {
+    "title": "Banana",
+    "description": "Ripe bananas, perfect for snacking.",
+    "image": "https://images.unsplash.com/photo-1567789352758-9e3dc54b3ae3?auto=format&fit=crop&w=800&q=80",
+    "price": 60,
+    "category": "Fruits",
+    "stock_quantity": 120
+  },
+  {
+    "title": "Pineapple",
+    "description": "Tropical and juicy pineapple.",
+    "image": "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=800&q=80",
+    "price": 90,
+    "category": "Fruits",
+    "stock_quantity": 40
+  },
+  {
+    "title": "Carrot",
+    "description": "Crunchy organic carrots.",
+    "image": "https://images.unsplash.com/photo-1442897961655-905a8343c8eb?auto=format&fit=crop&w=800&q=80",
+    "price": 40,
+    "category": "Vegetables",
+    "stock_quantity": 90
+  },
+  {
+    "title": "Tomato",
+    "description": "Juicy heirloom tomatoes.",
+    "image": "https://images.unsplash.com/photo-1443131612988-32b6d97cc5da?auto=format&fit=crop&w=800&q=80",
+    "price": 35,
+    "category": "Vegetables",
+    "stock_quantity": 110
+  },
+  {
+    "title": "Milk",
+    "description": "Farm‑fresh whole milk (1 L).",
+    "image": "https://images.unsplash.com/photo-1523473827533-2a64d0d36748?auto=format&fit=crop&w=800&q=80",
+    "price": 60,
+    "category": "Dairy",
+    "stock_quantity": 50
+  },
+  {
+    "title": "Eggs",
+    "description": "Free‑range dozen eggs.",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80",
+    "price": 75,
+    "category": "Dairy",
+    "stock_quantity": 70
+  },
+  {
+    "title": "Laptop",
+    "description": "15‑inch high‑performance laptop (8 GB RAM, 512 GB SSD).",
+    "image": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80",
+    "price": 60000,
+    "category": "Electronics",
+    "stock_quantity": 20
+  },
+  {
+    "title": "Smartphone",
+    "description": "Latest‑gen smartphone, 128 GB storage.",
+    "image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=800&q=80",
+    "price": 599.99,
+    "category": "Electronics",
+    "stock_quantity": 35
+  },
+  {
+    "title": "Headphones",
+    "description": "Wireless noise‑cancelling headphones.",
+    "image": "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800&q=80",
+    "price": 99.99,
+    "category": "Electronics",
+    "stock_quantity": 50
+  },
+  {
+    "title": "Sofa",
+    "description": "Comfy 3‑seater fabric sofa (charcoal).",
+    "image": "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=800&q=80",
+    "price": 299.99,
+    "category": "Furniture",
+    "stock_quantity": 8
+  },
+  {
+    "title": "Coffee Table",
+    "description": "Modern oak coffee table.",
+    "image": "https://images.unsplash.com/photo-1620633490433-eee56db52eb8?auto=format&fit=crop&w=800&q=80",
+    "price": 129.99,
+    "category": "Furniture",
+    "stock_quantity": 15
+  },
+  {
+    "title": "Sneakers",
+    "description": "Lightweight running sneakers (size‑selectable).",
+    "image": "https://images.unsplash.com/photo-1631542204051-7927ce32b94e?auto=format&fit=crop&w=800&q=80",
+    "price": 69.99,
+    "category": "Footwear",
+    "stock_quantity": 40
+  },
+  {
+    "title": "Backpack",
+    "description": "Water‑resistant daypack (20 L).",
+    "image": "https://images.unsplash.com/photo-1581605405669-fcdf81165afa?auto=format&fit=crop&w=800&q=80",
+    "price": 49.99,
+    "category": "Accessories",
+    "stock_quantity": 60
+  }
+]
