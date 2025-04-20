@@ -1,13 +1,31 @@
 # ===============================
 # 👨‍💻 Node.js / React / Vite
 # ===============================
+
+# ===============================
+# 🐍 Python / Flask / Backend
+# ===============================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+back/.env
+back/.env.*
+back/__pycache__/
+back/*.pyc
+back/*.pyo
+back/*.pyd
+back/migrations/
+
 node_modules/
 dist/
 build/
 .vite/
 .next/
 out/
-.env
+*.env
 .env.local
 .env.development.local
 .env.test.local
