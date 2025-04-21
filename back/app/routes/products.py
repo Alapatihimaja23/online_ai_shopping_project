@@ -1,15 +1,18 @@
 """Flask blueprints for the online AI shopping project."""
 
+import random
 from flask import Blueprint, jsonify, request
-from ..models import Product
 import google.generativeai as genai
+from ..models import Product
+
 
 products_bp = Blueprint('products', __name__)
 
 
 @products_bp.route('/', methods=['GET'])
 def get_products():
-    """Get a diverse set of products (by category if possible), with search, category, and limit support."""
+    """Get a diverse set of products (by category if possible),
+    with search, category, and limit support."""
     query = request.args.get('q')
     category = request.args.get('category')
     limit = request.args.get('limit', type=int, default=4)
