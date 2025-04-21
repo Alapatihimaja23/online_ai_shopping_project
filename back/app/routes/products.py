@@ -1,9 +1,13 @@
 """Flask blueprints for the online AI shopping project."""
 
 import random
+import os
 from flask import Blueprint, jsonify, request
 import google.generativeai as genai
+from dotenv import load_dotenv
 from ..models import Product
+
+load_dotenv()
 
 
 products_bp = Blueprint('products', __name__)

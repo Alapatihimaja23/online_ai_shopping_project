@@ -152,16 +152,42 @@ export default function Home({ selectedCategory, setSelectedCategory }: HomeProp
           onChange={handleSearch}
           className="w-full p-2 mb-6 border rounded shadow"
         />
+
+        {/* Categories section always at the top */}
+        <section className="w-full py-8 px-2 sm:px-4 flex flex-col items-center">
+          <h2 className="text-xl md:text-2xl font-bold mb-4 text-gray-800 text-center">Shop by Category</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 w-full max-w-3xl mx-auto">
+            {categories.map((category, index) => (
+              <div
+                key={index}
+                className={`bg-white rounded-lg shadow hover:shadow-md transition-shadow p-4 flex flex-col items-center justify-center cursor-pointer min-w-[110px] min-h-[110px] border-2 ${selectedCategory === category.name ? 'border-blue-500' : 'border-transparent'}`}
+                onClick={() => handleCategoryClick(category.name)}
+              >
+                <span className="mb-2 flex items-center justify-center">
+                  {category.icon}
+                </span>
+                <h3 className="text-sm font-semibold text-gray-800 text-center">{category.name}</h3>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Error message below categories */}
+        {error && (
+          <div className="text-center py-6 text-lg text-red-600">
+            {error === 'No products found.' ? (
+              <div>
+                <img src="https://placehold.co/300x300/eee/888?text=Out+of+Stock" alt="Out of Stock" className="mx-auto mb-4 rounded" style={{maxWidth:180}} />
+                <div>Oops, we are out of stock!</div>
+              </div>
+            ) : error}
+          </div>
+        )}
+
+        {/* Product grid below error */}
         {loading ? (
           <div className="text-center py-10 text-lg">Loading products...</div>
-        ) : error ? (
-          <div className="text-center py-10 text-lg text-red-600">{error === 'No products found.' ? (
-            <div>
-              <img src="https://placehold.co/300x300/eee/888?text=Out+of+Stock" alt="Out of Stock" className="mx-auto mb-4 rounded" style={{maxWidth:180}} />
-              <div>Oops, we are out of stock!</div>
-            </div>
-          ) : error}</div>
-        ) : (
+        ) : !error && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
             {products.map((product) => (
               <ProductCard key={product.id} {...{...product, price: Number(product.price)}} />
@@ -214,25 +240,6 @@ export default function Home({ selectedCategory, setSelectedCategory }: HomeProp
           <Button size="lg" className="text-base px-6 py-2 shadow-md bg-blue-600 hover:bg-blue-700 transition-colors mx-auto" onClick={() => alert('AI integration is in progress. We\'ll keep in touch!')}>
             Shop Now
           </Button>
-        </div>
-      </section>
-
-      {/* Categories */}
-      <section className="w-full py-8 px-2 sm:px-4 flex flex-col items-center">
-        <h2 className="text-xl md:text-2xl font-bold mb-4 text-gray-800 text-center">Shop by Category</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 w-full max-w-3xl mx-auto">
-          {categories.map((category, index) => (
-            <div
-              key={index}
-              className={`bg-white rounded-lg shadow hover:shadow-md transition-shadow p-4 flex flex-col items-center justify-center cursor-pointer min-w-[110px] min-h-[110px] border-2 ${selectedCategory === category.name ? 'border-blue-500' : 'border-transparent'}`}
-              onClick={() => handleCategoryClick(category.name)}
-            >
-              <span className="mb-2 flex items-center justify-center">
-                {category.icon}
-              </span>
-              <h3 className="text-sm font-semibold text-gray-800 text-center">{category.name}</h3>
-            </div>
-          ))}
         </div>
       </section>
 

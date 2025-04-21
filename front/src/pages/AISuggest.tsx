@@ -19,7 +19,7 @@ const mockSuggestions = [
 ];
 
 export default function AISuggest() {
-  const [suggestions, setSuggestions] = useState(mockSuggestions);
+  const [suggestions] = useState(mockSuggestions);
 
   const getNewSuggestions = () => {
     alert("Fetching suggestions from AI...");
